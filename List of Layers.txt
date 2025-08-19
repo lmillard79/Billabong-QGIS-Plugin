@@ -1,0 +1,32 @@
+Qld Topography Map - High Resolution
+https://spatial-gis.information.qld.gov.au/arcgis/rest/services/QTopo/QTopoBase_300dpi/MapServer
+
+Queensland DCDB, Coastline, Watercourse, Road and Railways
+https://spatial-gis.information.qld.gov.au/arcgis/services/Basemaps/FoundationData/MapServer/WFSServer
+
+Qld Aerial Imagery:
+https://spatial-img.information.qld.gov.au/arcgis/rest/services/Basemaps/LatestStateProgram_AllUsers/ImageServer/WMTS/1.0.0/WMTSCapabilities.xml
+
+Qld Waterway Barrier Works:
+https://spatial-gis.information.qld.gov.au/arcgis/services/Environment/Fisheries/MapServer/WMSServer
+
+QRA Flood Check mapping
+https://spatial-img.information.qld.gov.au/arcgis/rest/services/FloodCheck/BasinOnePercentAEP/MapServer/
+
+NSW Topography map:
+https://maps.six.nsw.gov.au/arcgis/rest/services/public/NSW_Base_Map/MapServer/
+
+Victorian DCDB:
+https://opendata.maps.vic.gov.au/geoserver/wfs
+
+National Wetness Indices and Inland water:
+https://ows.dea.ga.gov.au/
+
+BoM geofabric
+https://hosting.wsapi.cloud.bom.gov.au/arcgis/rest/services
+
+Opentopography:
+https://tile.opentopomap.org/{z}/{x}/{y}.png
+
+Brisbane City Plan - Stormwater:
+https://services2.arcgis.com/dEKgZETqwmDAh1rP/arcgis/rest/services/City_Plan_2014_LTIP_Other_Plans_Stormwater/FeatureServer

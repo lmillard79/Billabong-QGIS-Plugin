@@ -1,10 +1,12 @@
 import os.path
 import webbrowser
 
-from PyQt5.QtCore import QFileInfo
-from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QAction, QMenu
-from qgis.core import QgsProject, QgsSettings
+from PyQt5.QtCore import QFileInfo, Qt
+from PyQt5.QtGui import QIcon, QFont
+from PyQt5.QtWidgets import QAction, QMenu, QMessageBox, QDialog
+from PyQt5 import uic
+from qgis.core import QgsProject, QgsSettings, QgsTextAnnotation
+from qgis.gui import QgsMapCanvas
 
 from .config import Config
 from .constants import ABOUT_FILE_URL, PLUGIN_NAME, QLR_URL
@@ -39,6 +41,9 @@ class AusMap:
                 "https://wms-engineering.github.io/AusMap/",
             ],
         )
+
+        # Initialize watermark
+        self.watermark = None
 
     def initGui(self):
         self.options_factory = AusMapOptionsFactory(self)
@@ -110,12 +115,19 @@ class AusMap:
 
     def open_ausmap_node(self, id):
         node = self.config.get_ausmap_maplayer_node(id)
+        
+        # Show Google satellite acknowledgement if opening a Google satellite layer
+        if id and ("Google_Satellite" in id or "Google_Satellite_Hybrid" in id):
+            self.show_google_acknowledgement()
+        
         self.open_node(node, id)
 
     def open_node(self, node, id):
         QgsProject.instance().readLayer(node)
         layer = QgsProject.instance().mapLayer(id)
         if layer:
+            # Add watermark for attribution
+            self.add_watermark(layer.name())
             layer = [
                 layer for layer in QgsProject.instance().mapLayers().values()
             ]
@@ -124,7 +136,16 @@ class AusMap:
             return None
 
     def about_plugin(self):
-        webbrowser.open(ABOUT_FILE_URL)
+        """Show the about dialog with links to Digital Atlas."""
+        try:
+            # Load the about dialog UI
+            about_dialog_ui_path = os.path.join(os.path.dirname(__file__), "settings", "about_dialog.ui")
+            dialog = QDialog()
+            uic.loadUi(about_dialog_ui_path, dialog)
+            dialog.exec_()
+        except Exception as e:
+            # If UI file is not found, open the website
+            webbrowser.open(ABOUT_FILE_URL)
 
     def unload(self):
         self.iface.unregisterOptionsWidgetFactory(self.options_factory)
@@ -147,3 +168,76 @@ class AusMap:
         if self.menu:
             self.menu.deleteLater()
         self.menu = None
+
+    def add_watermark(self, layer_name):
+        """Add an attribution watermark to the map canvas when a layer is added."""
+        # Remove existing watermark if present
+        if self.watermark:
+            QgsProject.instance().annotationManager().removeAnnotation(self.watermark)
+        
+        # Create new watermark
+        self.watermark = QgsTextAnnotation()
+        
+        # Set watermark text based on layer source
+        if "Google" in layer_name:
+            text = "Map data © Google"
+        elif "OpenStreetMap" in layer_name or "OSM" in layer_name:
+            text = "© OpenStreetMap contributors"
+        elif "Geoscience" in layer_name or "GA" in layer_name:
+            text = "© Geoscience Australia"
+        elif "Qld" in layer_name or "Queensland" in layer_name:
+            text = "© Queensland Government"
+        elif "NSW" in layer_name:
+            text = "© NSW Government"
+        elif "Victoria" in layer_name or "Vic" in layer_name:
+            text = "© Victorian Government"
+        elif "BoM" in layer_name:
+            text = "© Bureau of Meteorology"
+        else:
+            text = "Map data from publicly available sources"
+        
+        # Configure the watermark
+        self.watermark.setDocumentSize(200, 30)
+        self.watermark.setMapPosition(self.iface.mapCanvas().extent().center())
+        self.watermark.setFrameSize(200, 30)
+        
+        # Set text properties
+        document = self.watermark.document()
+        document.setDefaultStyleSheet(
+            "body { color: rgba(0, 0, 0, 150); font-size: 10px; font-family: Arial; }"
+        )
+        document.setHtml(f"<body>{text}</body>")
+        
+        # Position watermark in bottom right corner
+        canvas = self.iface.mapCanvas()
+        canvas_size = canvas.size()
+        self.watermark.setFrameOffsetFromReferencePoint(
+            canvas_size.width() - 210, canvas_size.height() - 40
+        )
+        
+        # Add watermark to project
+        QgsProject.instance().annotationManager().addAnnotation(self.watermark)
+
+    def remove_watermark(self):
+        """Remove the attribution watermark from the map canvas."""
+        if self.watermark:
+            QgsProject.instance().annotationManager().removeAnnotation(self.watermark)
+            self.watermark = None
+
+    def show_google_acknowledgement(self):
+        """Show the Google satellite imagery acknowledgement dialog."""
+        try:
+            # Load the dialog UI
+            dialog_ui_path = os.path.join(os.path.dirname(__file__), "settings", "google_ack_dialog.ui")
+            dialog = QDialog()
+            uic.loadUi(dialog_ui_path, dialog)
+            dialog.exec_()
+        except Exception as e:
+            # If UI file is not found, show a simple message box
+            QMessageBox.information(
+                self.iface.mainWindow(),
+                "Google Satellite Imagery Acknowledgement",
+                "By using Google Satellite imagery through this plugin, you acknowledge and agree to Google's Terms of Service.\n\n"
+                "Use of this imagery is for visualization purposes only within QGIS.\n\n"
+                "For more information, please visit: https://www.google.com/help/terms_maps.html"
+            )
