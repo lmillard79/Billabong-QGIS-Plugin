@@ -13,7 +13,7 @@ changelog=- Initial release of Billabong plugin with flood and rainfall datasets
 repository=https://github.com/lmillard79/Billabong
 tracker=https://github.com/lmillard79/Billabong/issues
 
-icon=img/icon.png
+icon=img/WRM_DROPLET.png
 
 experimental=False
 deprecated=False

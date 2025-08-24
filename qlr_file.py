@@ -1,3 +1,4 @@
+import os
 import urllib.parse as urlparse
 
 from PyQt5 import QtXml

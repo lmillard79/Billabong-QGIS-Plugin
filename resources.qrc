@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>img/icon.png</file>
+        <file>img/WRM_DROPLET.png</file>
         <file>img/icon_about.png</file>
     </qresource>
 </RCC>
