@@ -16,19 +16,41 @@ class QlrFile:
 
     def get_groups_with_layers(self):
         result = []
-        groups = self.doc.elementsByTagName("layer-tree-group")
+        # Get all layer-tree-group elements
+        all_groups = self.doc.elementsByTagName("layer-tree-group")
+        if all_groups.count() == 0:
+            return result
+            
+        # Find the BILLABONG group (it should be the first group with name="BILLABONG")
+        billabong_group = None
         i = 0
-        while i < groups.count():
-            group = groups.at(i)
-            group_name = None
-            if (
-                group.toElement().hasAttribute("name")
-                and group.toElement().attribute("name") != ""
-            ):
-                group_name = group.toElement().attribute("name")
-                layers = self.get_group_layers(group)
-                if layers and group_name:
-                    result.append({"name": group_name, "layers": layers})
+        while i < all_groups.count():
+            group = all_groups.at(i)
+            group_element = group.toElement()
+            if (group_element.hasAttribute("name") and 
+                group_element.attribute("name") == "BILLABONG"):
+                billabong_group = group
+                break
+            i += 1
+            
+        # If we didn't find the BILLABONG group, return empty result
+        if not billabong_group:
+            return result
+            
+        # Get the actual category groups (children of BILLABONG group)
+        category_groups = billabong_group.childNodes()
+        i = 0
+        while i < category_groups.count():
+            category_group = category_groups.at(i)
+            if category_group.nodeName() == "layer-tree-group":
+                group_element = category_group.toElement()
+                group_name = None
+                if (group_element.hasAttribute("name") and 
+                    group_element.attribute("name") != ""):
+                    group_name = group_element.attribute("name")
+                    layers = self.get_group_layers(category_group)
+                    if layers and group_name:
+                        result.append({"name": group_name, "layers": layers})
             i += 1
         return result
 
@@ -42,8 +64,12 @@ class QlrFile:
                 layer_name = node.toElement().attribute("name")
                 layer_id = node.toElement().attribute("id")
                 maplayer_node = self.get_maplayer_node(layer_id)
+                # Debugging: print information about the layer
+                # print(f"Layer name: {layer_name}, ID: {layer_id}, Maplayer node found: {maplayer_node is not None}")
                 if maplayer_node:
                     service = self.get_maplayer_service(maplayer_node)
+                    # Debugging: print service information
+                    # print(f"Service for layer {layer_name}: {service}")
                     if service:
                         result.append(
                             {
@@ -64,12 +90,33 @@ class QlrFile:
         if datasource_nodes.count() == 1:
             datasource_node = datasource_nodes.at(0)
             datasource = datasource_node.toElement().text()
-            url_part = None
-            datasource_parts = datasource.split("&") + datasource.split(" ")
-            for part in datasource_parts:
-                if part.startswith("url"):
-                    url_part = part
-            if url_part:
+            
+            # Try to extract service information from datasource
+            # Handle different datasource formats
+            if "url=" in datasource:
+                # Extract URL from datasource
+                url_start = datasource.find("url='")
+                if url_start != -1:
+                    url_start += 5  # Move past "url='"
+                    url_end = datasource.find("'", url_start)
+                    if url_end != -1:
+                        url = datasource[url_start:url_end]
+                        # Try to identify service from URL
+                        if "bom.gov.au" in url:
+                            service = "BoM"
+                        elif "ga.gov.au" in url:
+                            service = "GA"
+                        elif "arcgis" in url:
+                            service = "ArcGIS"
+                        else:
+                            service = "web"
+            elif "servicename" in datasource:
+                # Handle the original format
+                url_part = None
+                datasource_parts = datasource.split("&") + datasource.split(" ")
+                for part in datasource_parts:
+                    if part.startswith("url"):
+                        url_part = part
                 if url_part:
                     url = url_part[5:]
                     url = urlparse.unquote(url)
@@ -96,9 +143,11 @@ class QlrFile:
             node = nodes.at(i)
             idNode = node.namedItem(key)
             if idNode is not None:
-                child = idNode.firstChild().toText().data()
-                # Layer found
-                if child == value:
-                    return node
+                # Check if the idNode has a text child
+                if idNode.firstChild() and idNode.firstChild().isText():
+                    child = idNode.firstChild().toText().data()
+                    # Layer found
+                    if child == value:
+                        return node
             i += 1
         return None

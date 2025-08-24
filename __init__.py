@@ -1,4 +1,4 @@
-from .ausmap import AusMap
+from .billabong import Billabong
 
 
 def classFactory(iface):
@@ -7,4 +7,4 @@ def classFactory(iface):
     :param iface: A QGIS interface instance.
     :type iface: QgsInterface
     """
-    return AusMap(iface)
+    return Billabong(iface)

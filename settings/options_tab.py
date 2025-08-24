@@ -16,7 +16,7 @@ DESIGNER, _ = uic.loadUiType(
 )
 
 
-class AusMapOptionsFactory(QgsOptionsWidgetFactory):
+class BillabongOptionsFactory(QgsOptionsWidgetFactory):
 
     def __init__(self, plugin):
         super().__init__()
@@ -83,10 +83,10 @@ class ConfigOptionsPage(QgsOptionsPageWidget, DESIGNER):
             # If UI file is not found, show a simple message box
             QMessageBox.information(
                 self,
-                "AusMap Feedback",
-                "Thank you for using AusMap!\n\n"
+                "Billabong Feedback",
+                "Thank you for using Billabong!\n\n"
                 "To provide feedback, please create an issue on our GitHub repository at:\n"
-                "https://github.com/WMS-Engineering/AusMap/issues\n\n"
+                "https://github.com/lmillard79/Billabong/issues\n\n"
                 "Or contact us directly at tools@wmseng.com.au"
             )
     
@@ -105,7 +105,7 @@ class ConfigOptionsPage(QgsOptionsPageWidget, DESIGNER):
         
         # Create feedback message
         feedback_message = f"""
-AusMap Plugin Feedback
+Billabong Plugin Feedback
 
 Name: {name or "Not provided"}
 Email: {email or "Not provided"}
@@ -121,8 +121,7 @@ Feedback:
             "Feedback Submitted",
             "Thank you for your feedback!\n\n"
             "To officially submit your feedback, please create an issue on our GitHub repository at:\n"
-            "https://github.com/WMS-Engineering/AusMap/issues\n\n"
-            "Or contact us directly at tools@wmseng.com.au\n\n"
+            "https://github.com/lmillard79/Billabong/issues\n\n"            
             "Your feedback:\n"
             f"{feedback_message}"
         )

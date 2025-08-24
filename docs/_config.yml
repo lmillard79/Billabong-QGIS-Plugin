@@ -18,10 +18,10 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: AusMap User Manual
+title: Billabong User Manual
 description: >- # this means to ignore newlines until "baseurl:"
-  User manual for the AusMap QGIS plugin
-url: https://wms-engineering.github.io/AusMap/ # the base hostname & protocol for your site, e.g. http://example.com
+  User manual for the Billabong QGIS plugin
+url: https://wms-engineering.github.io/Billabong/ # the base hostname & protocol for your site, e.g. http://example.com
 
 
 # Build settings
@@ -33,8 +33,8 @@ favicon_ico: "/assets/images/icon.ico"
 
 # Aux links for the upper right navigation
 aux_links:
-  "AusMap on GitHub":
-    - "https://github.com/WMS-Engineering/AusMap"
+  "Billabong on GitHub":
+    - "https://github.com/lmillard79/Billabong"
 
 nav_enabled: true
 

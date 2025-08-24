@@ -7,10 +7,10 @@ permalink: /settings/
 
 # Settings
 
-The AusMap plugin can be extended with additional map layers for easy access.  
+The Billabong plugin can be extended with additional map layers for easy access.  
 The map layers must be saved in a Layer Definition File (.QLR).  
 
-The .QLR file must match the AusMap menu layout, meaning that the map layers must be grouped into one or more categories.  
+The .QLR file must match the Billabong menu layout, meaning that the map layers must be grouped into one or more categories.  
 
 See the example below.
 
@@ -24,11 +24,11 @@ Save the layers in a .QLR file by selecting the groups, right-clicking, and choo
 
 ![Save QLR](/assets/images/save-qlr.png)
 
-Navigate to the AusMap page in the Options dialog (**Settings** > **Options** > **AusMap**), select the .QLR file from your local machine and click **OK**.  
+Navigate to the Billabong page in the Options dialog (**Settings** > **Options** > **Billabong**), select the .QLR file from your local machine and click **OK**.  
 
-![AusMap options dialog](/assets/images/options-dialog.png)
+![Billabong options dialog](/assets/images/options-dialog.png)
 
-The additional map layers will now appear in their respective groups inside the AusMap menu.  
+The additional map layers will now appear in their respective groups inside the Billabong menu.  
 
 ![Custom layers in menu](/assets/images/new_layers_in_menu.png)
 

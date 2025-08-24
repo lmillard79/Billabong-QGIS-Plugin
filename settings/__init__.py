@@ -1,1 +1,1 @@
-from .options_tab import AusMapOptionsFactory
+from .options_tab import BillabongOptionsFactory

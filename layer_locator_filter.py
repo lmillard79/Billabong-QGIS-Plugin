@@ -10,7 +10,7 @@ class LayerLocatorFilter(QgsLocatorFilter):
         self.layer_action_map = layer_action_map
 
     def name(self):
-        return "ausmap_layer_locator_filter"
+        return "billabong_layer_locator_filter"
 
     def displayName(self):
         return f"{PLUGIN_NAME} Layers"

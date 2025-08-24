@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Google Satellite Imagery Acknowledgement</string>
+   <string>Billabong Plugin - Google Maps Platform Acknowledgement</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

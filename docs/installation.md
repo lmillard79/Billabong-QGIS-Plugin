@@ -16,7 +16,7 @@ permalink: /installation/
 
 1. Open QGIS.
 2. Navigate to **Plugins** > **Manage and Install Plugins**.
-3. Search for *AusMap*.
+3. Search for *Billabong*.
 4. Click the **Install** button.
 
 ## Manual Installation through GitHub
