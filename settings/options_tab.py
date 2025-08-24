@@ -87,7 +87,7 @@ class ConfigOptionsPage(QgsOptionsPageWidget, DESIGNER):
                 "Thank you for using Billabong!\n\n"
                 "To provide feedback, please create an issue on our GitHub repository at:\n"
                 "https://github.com/lmillard79/Billabong/issues\n\n"
-                "Or contact us directly at tools@wmseng.com.au"
+                
             )
     
     def submit_feedback(self, dialog):

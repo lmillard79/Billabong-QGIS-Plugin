@@ -35,20 +35,56 @@ class BillabongConfig(QObject):
         categories = []
         groups = self.qlr_file.get_groups_with_layers()
         
+        # Debugging: Log the number of groups found
+        QgsMessageLog.logMessage(
+            f"Number of groups found in QLR file: {len(groups)}",
+            "Billabong",
+            Qgis.Info,
+        )
+        
         # Skip if no groups found
         if not groups:
+            QgsMessageLog.logMessage(
+                "No groups found in QLR file",
+                "Billabong",
+                Qgis.Warning,
+            )
             return categories
             
-        for group in groups:
+        for i, group in enumerate(groups):
+            # Debugging: Log group information
+            QgsMessageLog.logMessage(
+                f"Processing group {i}: name='{group.get('name', 'None')}', layers={len(group.get('layers', [])) if group.get('layers') else 0}",
+                "Billabong",
+                Qgis.Info,
+            )
+            
             # Skip groups without name or layers
             if not group.get("name") or not group.get("layers"):
+                QgsMessageLog.logMessage(
+                    f"Skipping group {i} due to missing name or layers",
+                    "Billabong",
+                    Qgis.Info,
+                )
                 continue
                 
             # Create selectables list
             selectables = []
-            for layer in group["layers"]:
+            for j, layer in enumerate(group["layers"]):
+                # Debugging: Log layer information
+                QgsMessageLog.logMessage(
+                    f"Processing layer {j} in group {i}: name='{layer.get('name', 'None')}', id='{layer.get('id', 'None')}'",
+                    "Billabong",
+                    Qgis.Info,
+                )
+                
                 # Skip layers without name or id
                 if not layer.get("name") or not layer.get("id"):
+                    QgsMessageLog.logMessage(
+                        f"Skipping layer {j} in group {i} due to missing name or id",
+                        "Billabong",
+                        Qgis.Info,
+                    )
                     continue
                     
                 selectables.append({
@@ -58,21 +94,69 @@ class BillabongConfig(QObject):
                     "id": layer["id"],
                 })
             
+            # Debugging: Log selectables information
+            QgsMessageLog.logMessage(
+                f"Group {i} ('{group['name']}') has {len(selectables)} valid layers",
+                "Billabong",
+                Qgis.Info,
+            )
+            
             # Only add group if it has selectables
             if selectables:
                 categories.append({
                     "name": group["name"],
                     "selectables": selectables,
                 })
+                QgsMessageLog.logMessage(
+                    f"Added group {i} ('{group['name']}') to categories",
+                    "Billabong",
+                    Qgis.Info,
+                )
+            else:
+                QgsMessageLog.logMessage(
+                    f"Skipping group {i} ('{group['name']}') due to no valid layers",
+                    "Billabong",
+                    Qgis.Info,
+                )
                 
+        QgsMessageLog.logMessage(
+            f"Total categories to be displayed: {len(categories)}",
+            "Billabong",
+            Qgis.Info,
+        )
         return categories
 
     def _get_qlr_file(self):
         # Always use the local QLR file instead of fetching it remotely
         # This avoids issues with remote fetching and 404 errors
+        qlr_path = os.path.join(os.path.dirname(__file__), "billabong.qlr")
+        QgsMessageLog.logMessage(
+            f"Attempting to load QLR file from: {qlr_path}",
+            "Billabong",
+            Qgis.Info,
+        )
+        
+        # Check if the file exists
+        if not os.path.exists(qlr_path):
+            QgsMessageLog.logMessage(
+                f"QLR file does not exist at: {qlr_path}",
+                "Billabong",
+                Qgis.Critical,
+            )
+            return None
+            
+        QgsMessageLog.logMessage(
+            f"QLR file exists, size: {os.path.getsize(qlr_path)} bytes",
+            "Billabong",
+            Qgis.Info,
+        )
+        
         try:
-            qlr_file = QlrFile(
-                os.path.join(os.path.dirname(__file__), "billabong.qlr")
+            qlr_file = QlrFile(qlr_path)
+            QgsMessageLog.logMessage(
+                "QLR file loaded successfully",
+                "Billabong",
+                Qgis.Info,
             )
         except Exception as e:
             # There was an error loading the QLR file

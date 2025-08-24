@@ -37,8 +37,7 @@ class Billabong:
         self.settings.setValue(
             "help/helpSearchPath",
             [
-                "https://docs.qgis.org/$qgis_short_version/$qgis_locale/docs/user_manual/",
-                "https://wms-engineering.github.io/Billabong/",
+                "https://docs.qgis.org/$qgis_short_version/$qgis_locale/docs/user_manual/",                
             ],
         )
 

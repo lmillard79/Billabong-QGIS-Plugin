@@ -36,6 +36,6 @@ Please report any bugs or feature requests by creating an issue in this GitHub r
 
 ## Credits and License
 
-Billabong was developed and is maintained by WMS Engineering and is licensed under the GNU General Public License (GPL) v3.0 or later. You are free to use, modify, and distribute this plugin under the terms of the GNU GPL as published by the Free Software Foundation. This plugin is distributed in the hope that it will be useful, but without any warranty. See the [GNU GPL](https://www.gnu.org/licenses/) for more details.
+Billabong was developed and is maintained by Lindsay Millard at WRM Water and Environment and is licensed under the GNU General Public License (GPL) v3.0 or later. You are free to use, modify, and distribute this plugin under the terms of the GNU GPL as published by the Free Software Foundation. This plugin is distributed in the hope that it will be useful, but without any warranty. See the [GNU GPL](https://www.gnu.org/licenses/) for more details.
 The design and functionality of Billabong draw inspiration from the [Dataforsyningen QGIS plugin](https://github.com/SDFIdk/Qgis-dataforsyningen).
-For more detailed instructions and usage guidelines, refer to the [User Manual](https://wms-engineering.github.io/Billabong/).
+For more detailed instructions and usage guidelines, refer to the [User Manual](docs/index.md).
