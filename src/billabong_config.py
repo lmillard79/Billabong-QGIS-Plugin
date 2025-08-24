@@ -129,7 +129,7 @@ class BillabongConfig(QObject):
     def _get_qlr_file(self):
         # Always use the local QLR file instead of fetching it remotely
         # This avoids issues with remote fetching and 404 errors
-        qlr_path = os.path.join(os.path.dirname(__file__), "billabong.qlr")
+        qlr_path = os.path.join(os.path.dirname(__file__), "..", "data", "billabong.qlr")
         QgsMessageLog.logMessage(
             f"Attempting to load QLR file from: {qlr_path}",
             "Billabong",

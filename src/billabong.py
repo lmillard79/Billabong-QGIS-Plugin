@@ -28,7 +28,7 @@ class Billabong:
         self.settings = QgsSettings()
 
         path = QFileInfo(os.path.realpath(__file__)).path()
-        cache_path = path + "/data/"
+        cache_path = os.path.join(path, "..", "..", "data")
         if not os.path.exists(cache_path):
             os.makedirs(cache_path)
 
@@ -113,7 +113,7 @@ class Billabong:
 
         # Add About the plugin menu item
         icon_about_path = os.path.join(
-            os.path.dirname(__file__), "img/icon_about.png"
+            os.path.dirname(__file__), "..", "..", "img", "icon_about.png"
         )
         self.about_menu = QAction(
             QIcon(icon_about_path),

@@ -24,10 +24,7 @@ class BillabongOptionsFactory(QgsOptionsWidgetFactory):
 
     def icon(self):
         return QIcon(
-            os.path.dirname(os.path.realpath(__file__))
-            + os.sep
-            + os.pardir
-            + "/img/icon.png"
+            os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "..", "img", "WRM_DROPLET.png")
         )
 
     def createWidget(self, parent):

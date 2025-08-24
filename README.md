@@ -42,4 +42,4 @@ For more detailed instructions and usage guidelines, refer to the [User Manual](
 
 ## Development
 
-This plugin was developed with support from WRM Water and Environment. For information about the development process, fixes, and future enhancements, please see [documentation.md](documentation.md).
+This plugin was developed with support from WRM Water and Environment. For information about the development process, fixes, and future enhancements, please see [documentation.md](docs/documentation.md).

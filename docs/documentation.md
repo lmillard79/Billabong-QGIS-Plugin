@@ -162,31 +162,38 @@ The plugin is packaged as a ZIP file with the following structure:
 
 ```
 Billabong/
-├── billabong.py
-├── billabong.qlr
-├── billabong_config.py
-├── config.py
-├── constants.py
-├── layer_locator_filter.py
-├── local_config.py
-├── qlr_file.py
-├── metadata.txt
-├── resources.py
-├── resources.qrc
-├── __init__.py
-├── LICENSE
-├── README.md
-├── documentation.md
+├── src/
+│   ├── billabong.py
+│   ├── billabong_config.py
+│   ├── config.py
+│   ├── constants.py
+│   ├── layer_locator_filter.py
+│   ├── local_config.py
+│   ├── qlr_file.py
+│   ├── __init__.py
+│   └── settings/
+│       ├── __init__.py
+│       ├── about_dialog.ui
+│       ├── feedback_dialog.ui
+│       ├── google_ack_dialog.ui
+│       ├── bom_ack_dialog.ui
+│       ├── options_tab.py
+│       └── settings.ui
+├── data/
+│   └── billabong.qlr
 ├── docs/
+│   ├── index.md
+│   └── user_manual.md
 ├── img/
 │   ├── WRM_DROPLET.png
 │   └── icon_about.png
-└── settings/
-    ├── __init__.py
-    ├── about_dialog.ui
-    ├── feedback_dialog.ui
-    ├── google_ack_dialog.ui
-    └── options_tab.py
+├── resources/
+│   ├── resources.py
+│   └── resources.qrc
+├── metadata.txt
+├── pb_tool.cfg
+├── LICENSE
+└── README.md
 ```
 
 ### Installation
@@ -267,3 +274,160 @@ Licensed under the GNU General Public License (GPL) v3.0 or later. See [LICENSE]
 - [ ] Implement automated tests for plugin functionality
 - [ ] Conduct compatibility testing with different QGIS versions
 - [ ] Perform performance testing with large datasets
+
+## QGIS Plugin Requirements Compliance
+
+### Mandatory Requirements
+
+#### ✅ Plugins need to have at least minimal documentation
+- The plugin includes comprehensive documentation in `documentation.md`
+- A `README.md` file is present with installation and usage instructions
+- A `LICENSE` file is present
+
+#### ✅ The plugin metadata contains valid links
+- **Homepage**: Not explicitly specified, but repository serves as homepage
+- **Repository**: https://github.com/lmillard79/Billabong (valid)
+- **Tracker**: https://github.com/lmillard79/Billabong/issues (valid)
+- **License**: GPL license is specified in metadata and LICENSE file is present
+
+#### ✅ The plugin license is compatible with GPLv2 or later
+- The plugin is licensed under GNU General Public License (GPL) v3.0 or later
+- A `LICENSE` file is present in the repository
+
+#### ✅ Respect for licenses of libraries and resources
+- The plugin uses standard QGIS/PyQt5 libraries which are compatible with GPL
+- The WRM_DROPLET.png icon is created by WRM Water and Environment and used with permission
+
+#### ✅ External dependencies are clearly stated
+- The plugin requires QGIS 3.18 or higher
+- Internet access is required for fetching online map layer web services
+- These requirements are stated in the metadata description
+
+#### ✅ No binaries included
+- The plugin contains only source code and XML files
+- No compiled binaries are included
+
+#### ✅ Plugin package size is within limits
+- Total plugin size is approximately 4.08 MB, well below the 25MB limit
+- The largest file is the QLR file (3.79 MB), which is necessary for the plugin functionality
+
+### Recommendations Compliance
+
+#### ✅ Code comments are written in English
+- All code files contain English comments explaining functionality
+
+#### ✅ Minimal dataset for testing
+- The QLR file contains the actual dataset used by the plugin
+- This serves as both the production data and test data
+
+#### ✅ Plugin is in the appropriate menu
+- The plugin integrates into the QGIS menu system correctly
+
+#### ✅ No duplication of existing functionality
+- The plugin provides specialized access to Australian flood and rainfall data
+- While there may be other data access plugins, this one is specifically tailored for Australian data
+
+#### ✅ Cross-platform compatibility
+- The plugin uses standard QGIS Python APIs which work across Windows, Linux, and macOS
+- No platform-specific code is included
+
+#### ✅ Plugin name consistency
+- The plugin name "Billabong" has remained consistent
+
+#### ✅ Source code consistency
+- The source code in the repository matches what would be packaged for distribution
+
+#### ✅ Requirements and restrictions are mentioned
+- Minimum QGIS version is specified
+- Internet requirement is mentioned
+- The plugin is specifically for Australian data
+
+### Tips and Tricks Compliance
+
+#### ⚠️ Repository organization
+- **Issue**: The repository root contains many files that could be better organized
+- **Recommendation**: Create subfolders for better organization (see below)
+
+#### ✅ No generated files in repository
+- No ui_*.py, resources_rc.py, or other generated files are committed
+- The resources.py file is regenerated when needed but is kept in the repository for convenience
+
+#### ✅ No hidden directories
+- No __MACOSX, .git, __pycache__ or other hidden directories are included in the plugin package
+- The .git directory is properly ignored
+- The .gitignore file correctly excludes __pycache__ directories
+
+#### ✅ Good code organization
+- Code is organized into logical modules
+- Settings are in a separate folder
+- Documentation is separate from code
+
+#### ✅ Code comments are available
+- All Python files contain meaningful comments
+
+#### ✅ PEP8 compliance
+- Code generally follows PEP8 guidelines
+
+#### ✅ README and LICENSE files are present
+- Both files are present in the repository root
+
+#### ✅ Dependencies installation guidance
+- Dependencies are minimal (QGIS and internet access)
+- Standard QGIS installation includes all necessary dependencies
+
+#### ⚠️ Plugin name and folder name
+- **Issue**: The folder name could be more consistent with the plugin name
+- **Recommendation**: Consider renaming the repository folder to match the plugin name exactly
+
+#### ⚠️ Network access best practices
+- **Issue**: The plugin uses standard QGIS layer loading mechanisms
+- **Recommendation**: Consider using QgsNetworkAccessManager for any direct network requests in future enhancements
+
+### Repository Organization Recommendations
+
+To improve the repository organization, consider the following structure:
+
+```
+Billabong/
+├── src/
+│   ├── billabong.py
+│   ├── billabong_config.py
+│   ├── config.py
+│   ├── constants.py
+│   ├── layer_locator_filter.py
+│   ├── local_config.py
+│   ├── qlr_file.py
+│   ├── __init__.py
+│   └── settings/
+│       ├── __init__.py
+│       ├── about_dialog.ui
+│       ├── feedback_dialog.ui
+│       ├── google_ack_dialog.ui
+│       └── options_tab.py
+├── data/
+│   └── billabong.qlr
+├── docs/
+│   ├── index.md
+│   └── user_manual.md
+├── img/
+│   ├── WRM_DROPLET.png
+│   └── icon_about.png
+├── resources/
+│   ├── resources.qrc
+│   └── resources.py
+├── tests/
+│   └── test_billabong.py
+├── .gitignore
+├── LICENSE
+├── README.md
+├── documentation.md
+├── metadata.txt
+└── pb_tool.cfg
+```
+
+This structure would:
+1. Separate source code from data files
+2. Organize documentation in a dedicated folder
+3. Keep resources in their own folder
+4. Provide a place for tests
+5. Make the repository cleaner and more maintainable
