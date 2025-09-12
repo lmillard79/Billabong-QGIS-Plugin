@@ -1,4 +1,4 @@
-from src.billabong import Billabong
+from .src.billabong import Billabong
 
 def classFactory(iface):
     """
