@@ -3,12 +3,23 @@ name=Billabong
 qgisMinimumVersion=3.18
 description=Billabong is a comprehensive QGIS plugin for hydrology and flood engineering, providing instant access to Australian rainfall data, flood maps, satellite imagery, and essential web tools.
 about=Billabong streamlines the workflow for Australian flood engineers and hydrologists by integrating critical datasets directly into QGIS. It provides organized access to over 100+ national and state-based layers, including Bureau of Meteorology rainfall data, Geoscience Australia topography, Digital Earth Australia satellite imagery, and historical flood maps for Queensland and NSW. The plugin also includes a suite of web tools for quick access to ARR Data Hub, RFFE, BoM design rainfall (IFD), and climate change data, making it an essential toolkit for water resource professionals.
-version=1.5
+version=1.6
 
 author=lmillard79
 email=lindsay.millard79@gmail.com
 
-changelog=1.5:
+changelog=1.6:
+    - Fix silent QLR XML parse failure — errors now logged with line/column detail.
+    - Fix QFile resource leak in custom QLR file loading (file now always closed).
+    - Fix QByteArray type mismatch when reading QLR content via QFile.
+    - Fix variable shadowing bug in open_node() that discarded the loaded layer reference.
+    - Fix bare except clause — now catches KeyError specifically.
+    - Add watermark cleanup on plugin unload to avoid stale annotations.
+    - Show visible QGIS message bar error when layer data file is missing or corrupt.
+    - Replace non-functional feedback dialog with a direct "Report an Issue" link to GitHub.
+    - Remove dead remote-fetch code (never called since v1.0).
+    - Remove duplicate PyQt5 import and unused imports.
+    1.5:
     - Major reorganization of layer hierarchy (National, State, Hydrology subgroups).
     - Added extensive "Web Tools" menu with links to National, State, and International datasets (GPM, ERA5, etc.).
     - Included DEA Surface Reflectance in new "Satellite Observations" group.

@@ -1,9 +1,6 @@
-import codecs
 import os.path
-from datetime import datetime, timezone
-from urllib.request import urlopen
 
-from PyQt5.QtCore import QFile, QIODevice, QObject
+from PyQt5.QtCore import QObject
 from qgis.core import Qgis, QgsMessageLog
 
 from .qlr_file import QlrFile
@@ -14,9 +11,6 @@ class BillabongConfig(QObject):
     def __init__(self, settings):
         super(BillabongConfig, self).__init__()
         self.settings = settings
-        self.cached_billabong_qlr_file = os.path.join(
-            self.settings.value("cache_path"), "billabong_data.qlr"
-        )
         self.qlr_file = None
         self.categories = []
 
@@ -58,11 +52,13 @@ class BillabongConfig(QObject):
         
         # Check if the file exists
         if not os.path.exists(qlr_path):
-            QgsMessageLog.logMessage(
-                f"QLR file does not exist at: {qlr_path}",
-                "Billabong",
-                Qgis.Critical,
-            )
+            msg = f"Billabong: QLR data file not found at {qlr_path}"
+            QgsMessageLog.logMessage(msg, "Billabong", Qgis.Critical)
+            try:
+                from qgis.utils import iface as _iface
+                _iface.messageBar().pushMessage("Billabong", "Layer data file is missing — plugin may not function correctly.", level=Qgis.Critical)
+            except Exception:
+                pass
             return None
             
         QgsMessageLog.logMessage(
@@ -73,34 +69,18 @@ class BillabongConfig(QObject):
         
         try:
             qlr_file = QlrFile(qlr_path)
-            QgsMessageLog.logMessage(
-                "QLR file loaded successfully",
-                "Billabong",
-                Qgis.Info,
-            )
+            QgsMessageLog.logMessage("QLR file loaded successfully", "Billabong", Qgis.Info)
         except Exception as e:
-            # There was an error loading the QLR file
             QgsMessageLog.logMessage(
                 f"An error occurred while loading QLR file: {e}",
                 "Billabong",
                 Qgis.Critical,
             )
+            try:
+                from qgis.utils import iface as _iface
+                _iface.messageBar().pushMessage("Billabong", f"Failed to load layer data: {e}", level=Qgis.Critical)
+            except Exception:
+                pass
             qlr_file = None
 
         return qlr_file
-
-    def _read_cached_qlr(self):
-        f = QFile(self.cached_billabong_qlr_file)
-        f.open(QIODevice.ReadOnly)
-        content = f.readAll()
-        return QlrFile(content)
-
-    def _get_remote_qlr(self):
-        with urlopen(self.settings.value("billabong_qlr")) as response:
-            return response.read().decode("utf-8")
-
-    def _write_local_qlr(self, content):
-        if os.path.exists(self.cached_billabong_qlr_file):
-            os.remove(self.cached_billabong_qlr_file)
-        with codecs.open(self.cached_billabong_qlr_file, "w", "utf-8") as f:
-            f.write(content)

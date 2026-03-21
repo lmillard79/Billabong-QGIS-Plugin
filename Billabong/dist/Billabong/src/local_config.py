@@ -31,7 +31,11 @@ class LocalConfig:
         """Read and load the QLR file from the local path."""
         f = QFile(self.local_qlr_file_path)
         f.open(QIODevice.ReadOnly)
-        return QlrFile(f.readAll())
+        try:
+            content = f.readAll()
+        finally:
+            f.close()
+        return QlrFile(content)
 
     def _parse_local_categories(self):
         """Parse categories and layers from the loaded QLR file."""
