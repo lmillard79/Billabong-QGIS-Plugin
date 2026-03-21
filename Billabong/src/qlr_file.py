@@ -2,33 +2,47 @@ import os
 import urllib.parse as urlparse
 
 from PyQt5 import QtXml
+from PyQt5.QtCore import QByteArray
+from qgis.core import Qgis, QgsMessageLog
 
 
 class QlrFile:
 
     def __init__(self, xml):
+        self.doc = None
         try:
-            # Check if xml is a file path or XML content
-            if isinstance(xml, str) and os.path.exists(xml):
-                # It's a file path, read the content
+            if isinstance(xml, QByteArray):
+                xml_content = xml.data().decode('utf-8')
+            elif isinstance(xml, str) and os.path.exists(xml):
                 with open(xml, 'r', encoding='utf-8') as f:
                     xml_content = f.read()
             else:
-                # It's already XML content
                 xml_content = xml
-            
-            self.doc = QtXml.QDomDocument()
-            success, error_msg, error_line, error_column = self.doc.setContent(xml_content, True)
+
+            doc = QtXml.QDomDocument()
+            success, error_msg, error_line, error_column = doc.setContent(xml_content, True)
             if not success:
-                pass
+                QgsMessageLog.logMessage(
+                    f"Failed to parse QLR XML: {error_msg} (line {error_line}, col {error_column})",
+                    "Billabong",
+                    Qgis.Critical,
+                )
+            else:
+                self.doc = doc
 
         except Exception as e:
-            pass
+            QgsMessageLog.logMessage(
+                f"Exception loading QLR file: {e}",
+                "Billabong",
+                Qgis.Critical,
+            )
 
     def get_menu_structure(self):
         """
         Returns a recursive structure of groups and layers from the BILLABONG group.
         """
+        if self.doc is None:
+            return []
         root_groups = self.doc.elementsByTagName("layer-tree-group")
         if root_groups.count() == 0:
             return []
@@ -111,33 +125,6 @@ class QlrFile:
                 }
         return None
 
-    # Legacy method for backward compatibility during refactor
-    def get_groups_with_layers(self):
-        """
-        Legacy flat structure parser. 
-        It only looks one level deep under BILLABONG.
-        """
-        structure = self.get_menu_structure()
-        # Convert the recursive structure to the flat 'selectables' format expected by legacy code
-        result = []
-        for item in structure:
-            if item["type"] == "group":
-                layers = []
-                self._flatten_layers(item["children"], layers)
-                if layers:
-                    result.append({
-                        "name": item["name"],
-                        "layers": layers
-                    })
-        return result
-
-    def _flatten_layers(self, items, result_list):
-        for item in items:
-            if item["type"] == "layer":
-                result_list.append(item)
-            elif item["type"] == "group":
-                self._flatten_layers(item["children"], result_list)
-
     def get_maplayer_service(self, maplayer_node):
         service = "other"
         datasource_node = None
@@ -182,11 +169,13 @@ class QlrFile:
                     try:
                         if url_params["servicename"]:
                             service = url_params["servicename"]
-                    except:
+                    except KeyError:
                         service = "unknown"
         return service
 
     def get_maplayer_node(self, id):
+        if self.doc is None:
+            return None
         node = self.get_first_child_by_tag_name_value(
             self.doc.documentElement(), "maplayer", "id", id
         )

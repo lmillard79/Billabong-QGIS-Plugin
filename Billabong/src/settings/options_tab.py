@@ -1,9 +1,9 @@
 import os
+import webbrowser
 
 from PyQt5 import uic
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMessageBox, QPushButton, QDialog, QLineEdit, QTextEdit, QComboBox
-from PyQt5 import uic
+from PyQt5.QtWidgets import QPushButton
 from qgis.core import QgsSettings
 from qgis.gui import (
     QgsFileWidget,
@@ -42,7 +42,8 @@ class ConfigOptionsPage(QgsOptionsPageWidget, DESIGNER):
 
         # Connect the feedback button
         if self.feedback_button:
-            self.feedback_button.clicked.connect(self.show_feedback_dialog)
+            self.feedback_button.setText("Report an Issue")
+            self.feedback_button.clicked.connect(self.open_github_issues)
 
         self.load_settings()
 
@@ -64,61 +65,6 @@ class ConfigOptionsPage(QgsOptionsPageWidget, DESIGNER):
         self.plugin.reload_menu()
         return True
 
-    def show_feedback_dialog(self):
-        """Show a feedback dialog to the user."""
-        try:
-            # Load the feedback dialog UI
-            feedback_dialog_ui_path = os.path.join(os.path.dirname(__file__), "feedback_dialog.ui")
-            dialog = QDialog()
-            uic.loadUi(feedback_dialog_ui_path, dialog)
-            
-            # Connect the OK button to submit feedback
-            dialog.buttonBox.accepted.connect(lambda: self.submit_feedback(dialog))
-            
-            dialog.exec_()
-        except Exception as e:
-            # If UI file is not found, show a simple message box
-            QMessageBox.information(
-                self,
-                "Billabong Feedback",
-                "Thank you for using Billabong!\n\n"
-                "To provide feedback, please create an issue on our GitHub repository at:\n"
-                "https://github.com/lmillard79/Billabong/issues\n\n"
-                
-            )
-    
-    def submit_feedback(self, dialog):
-        """Handle feedback submission."""
-        # Get feedback data from dialog
-        name = dialog.findChild(QLineEdit, "nameLineEdit").text()
-        email = dialog.findChild(QLineEdit, "emailLineEdit").text()
-        feedback_type = dialog.findChild(QComboBox, "feedbackTypeComboBox").currentText()
-        feedback_text = dialog.findChild(QTextEdit, "feedbackTextEdit").toPlainText()
-        
-        # Check if feedback text is provided
-        if not feedback_text.strip():
-            QMessageBox.warning(dialog, "Feedback Submission", "Please enter your feedback before submitting.")
-            return
-        
-        # Create feedback message
-        feedback_message = f"""
-Billabong Plugin Feedback
-
-Name: {name or "Not provided"}
-Email: {email or "Not provided"}
-Type: {feedback_type}
-
-Feedback:
-{feedback_text}
-        """
-        
-        # Show confirmation message
-        QMessageBox.information(
-            dialog,
-            "Feedback Submitted",
-            "Thank you for your feedback!\n\n"
-            "To officially submit your feedback, please create an issue on our GitHub repository at:\n"
-            "https://github.com/lmillard79/Billabong/issues\n\n"            
-            "Your feedback:\n"
-            f"{feedback_message}"
-        )
+    def open_github_issues(self):
+        """Open the GitHub issues page to report an issue."""
+        webbrowser.open("https://github.com/lmillard79/Billabong/issues")

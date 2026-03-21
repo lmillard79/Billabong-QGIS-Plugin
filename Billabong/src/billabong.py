@@ -1,12 +1,10 @@
 import os.path
 import webbrowser
 
-from PyQt5.QtCore import QFileInfo, Qt
-from PyQt5.QtGui import QIcon, QFont
-from PyQt5.QtWidgets import QAction, QMenu, QMessageBox, QDialog
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QAction, QMessageBox, QDialog
 from PyQt5 import uic
 from qgis.core import QgsProject, QgsSettings, QgsTextAnnotation
-from qgis.gui import QgsMapCanvas
 
 from .config import Config
 from .constants import ABOUT_FILE_URL, PLUGIN_NAME, QLR_URL
@@ -30,12 +28,6 @@ class Billabong:
         self.settings = QgsSettings()
         self.menu_manager = None
 
-        path = QFileInfo(os.path.realpath(__file__)).path()
-        cache_path = os.path.join(path, "..", "..", "data")
-        if not os.path.exists(cache_path):
-            os.makedirs(cache_path)
-
-        self.settings.setValue("cache_path", cache_path)
         self.settings.setValue("billabong_qlr", QLR_URL)
         self.settings.setValue(
             "help/helpSearchPath",
@@ -125,14 +117,7 @@ class Billabong:
         QgsProject.instance().readLayer(node)
         layer = QgsProject.instance().mapLayer(id)
         if layer:
-            # Add watermark for attribution
             self.add_watermark(layer.name())
-            layer = [
-                layer for layer in QgsProject.instance().mapLayers().values()
-            ]
-            return layer
-        else:
-            return None
 
     def about_plugin(self):
         """Show the about dialog with links to Digital Atlas."""
@@ -147,11 +132,12 @@ class Billabong:
             webbrowser.open(ABOUT_FILE_URL)
 
     def unload(self):
+        self.remove_watermark()
         self.iface.unregisterOptionsWidgetFactory(self.options_factory)
         self.iface.deregisterLocatorFilter(self.layer_locator_filter)
         self.options_factory = None
         self.layer_locator_filter = None
-        
+
         if self.menu_manager:
             self.menu_manager.clear()
             self.menu_manager = None
